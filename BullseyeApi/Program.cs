@@ -32,9 +32,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 var stockService = app.Services.GetRequiredService<StockService>();
+var portfolioService = app.Services.GetRequiredService<PortfolioService>();
+
 var timer = new System.Threading.Timer(_ =>
 {
     stockService.UpdatePrices();
+    portfolioService.RecordValue(stockService.GetAllStocks());
 }, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
 
 app.Run();

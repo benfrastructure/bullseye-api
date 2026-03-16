@@ -6,10 +6,29 @@ namespace BullseyeApi.Services
     {
         private readonly List<Holding> _holdings = new();
         private decimal _cashBalance = 100000m;
+        private readonly List<PortfolioValuePoint> _valueHistory = new();
 
         public List<Holding> GetHoldings() => _holdings;
-
         public decimal GetCashBalance() => _cashBalance;
+        public List<PortfolioValuePoint> GetValueHistory() => _valueHistory;
+
+        public void RecordValue(List<Stock> stocks)
+        {
+            var holdingsValue = _holdings.Sum(h =>
+            {
+                var stock = stocks.FirstOrDefault(s => s.Ticker == h.Ticker);
+                return h.Shares * (stock?.Price ?? h.PurchasePrice);
+            });
+
+            var now = DateTime.Now;
+            int time = now.Hour * 3600 + now.Minute * 60 + now.Second;
+
+            _valueHistory.Add(new PortfolioValuePoint
+            {
+                Time = time,
+                Value = holdingsValue + _cashBalance
+            });
+        }
 
         public bool BuyShares(string ticker, decimal shares, decimal price)
         {

@@ -42,5 +42,11 @@ namespace BullseyeApi.Controllers
             if (!success) return BadRequest("Unable to sell shares.");
             return Ok();
         }
+
+        [HttpGet("history")]
+        public IActionResult GetValueHistory()
+        {
+            return Ok(_portfolioService.GetValueHistory());
+        }
     }
 }
